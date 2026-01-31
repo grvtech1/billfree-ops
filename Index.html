@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🔐 BillFree TechSupport Ops</title>
+  <title>🔐 BillFree TechSupport - Secure Portal</title>
   
-  <!-- Google Sign-In -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -19,6 +19,7 @@
       justify-content: center;
       padding: 20px;
     }
+    
     .container {
       background: white;
       border-radius: 20px;
@@ -27,7 +28,14 @@
       width: 100%;
       text-align: center;
       box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      animation: slideUp 0.6s ease-out;
     }
+    
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
     .logo {
       width: 100px;
       height: 100px;
@@ -38,9 +46,12 @@
       justify-content: center;
       margin: 0 auto 32px;
       font-size: 48px;
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
     }
+    
     h1 { font-size: 32px; font-weight: 800; color: #1E293B; margin-bottom: 12px; }
-    .subtitle { font-size: 16px; color: #64748B; margin-bottom: 40px; }
+    .subtitle { font-size: 16px; color: #64748B; margin-bottom: 40px; line-height: 1.6; }
+    
     .btn {
       width: 100%;
       padding: 18px 32px;
@@ -52,10 +63,72 @@
       font-weight: 700;
       cursor: pointer;
       transition: all 0.3s ease;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
     }
-    .btn:hover { transform: translateY(-3px); }
+    
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn-google {
+      background: white;
+      color: #1E293B;
+      border: 2px solid #E2E8F0;
+      box-shadow: none;
+    }
+    
+    .btn-google:hover {
+      border-color: #667eea;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    }
+    
+    .info-box {
+      background: #F8FAFC;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: left;
+      font-size: 13px;
+      color: #64748B;
+      margin-top: 32px;
+    }
+    
+    .info-box strong {
+      color: #1E293B;
+      display: block;
+      margin-bottom: 8px;
+    }
+    
+    .info-box ul {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .info-box li {
+      padding: 4px 0;
+      padding-left: 20px;
+      position: relative;
+    }
+    
+    .info-box li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #10B981;
+      font-weight: 700;
+    }
+    
     #authenticated { display: none; }
     #authenticated.show { display: block; }
+    
+    #access-denied { display: none; }
+    #access-denied.show { display: block; }
+    
     .success-box {
       background: #ECFDF5;
       border: 2px solid #10B981;
@@ -63,37 +136,157 @@
       padding: 24px;
       margin-bottom: 24px;
     }
+    
+    .success-box h3 {
+      color: #065F46;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .user-email {
+      font-size: 14px;
+      color: #059669;
+      font-weight: 600;
+    }
+    
+    .denied-box {
+      background: #FEE2E2;
+      border: 2px solid #DC2626;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    
+    .denied-box h3 {
+      color: #DC2626;
+      margin-bottom: 12px;
+    }
+    
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .redirect-info {
+      background: #FEF3C7;
+      border: 2px solid #F59E0B;
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 20px;
+      font-size: 13px;
+      color: #92400E;
+    }
+    
+    @media (max-width: 600px) {
+      .container { padding: 40px 28px; }
+      h1 { font-size: 26px; }
+      .logo { width: 80px; height: 80px; font-size: 36px; }
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="logo">🎫</div>
     <h1>BillFree TechSupport</h1>
-    <p class="subtitle">Enterprise Operations Dashboard v10.0 PRO</p>
+    <p class="subtitle">
+      Operations Management Dashboard<br>
+      <strong>Enterprise v10.0 PRO</strong>
+    </p>
     
-    <!-- Login -->
+    <!-- Login Screen -->
     <div id="login-screen">
-      <button class="btn" onclick="handleGoogleSignIn()">
+      <button class="btn btn-google" onclick="handleGoogleSignIn()">
+        <svg width="20" height="20" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
         Sign in with Google
+      </button>
+      
+      <div class="info-box">
+        <strong>🔒 Secure Authentication</strong>
+        <ul>
+          <li>OAuth 2.0 protected</li>
+          <li>Only authorized Tech Team members</li>
+          <li>Session expires after 8 hours</li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- Authenticated Screen -->
+    <div id="authenticated">
+      <div class="success-box">
+        <h3>✅ Authentication Successful</h3>
+        <p class="user-email" id="user-email">Loading...</p>
+      </div>
+      
+      <button class="btn" onclick="launchDashboard()" id="launch-btn">
+        🚀 Launch Dashboard
+      </button>
+      
+      <div class="redirect-info">
+        <strong>ℹ️ Note:</strong> You'll be redirected to the secure dashboard. 
+        Your session is valid for 8 hours.
+      </div>
+      
+      <button class="btn btn-google" onclick="handleLogout()" style="margin-top: 16px;">
+        🚪 Logout
       </button>
     </div>
     
-    <!-- Authenticated -->
-    <div id="authenticated">
-      <div class="success-box">
-        <h3 style="color: #065F46; margin-bottom: 8px;">✅ Authenticated</h3>
-        <p id="user-email" style="color: #059669; font-weight: 600;"></p>
+    <!-- Access Denied -->
+    <div id="access-denied">
+      <div class="denied-box">
+        <h3>🔒 Access Denied</h3>
+        <p style="color: #DC2626; font-size: 14px; margin-bottom: 12px;">
+          Your account <strong id="denied-email"></strong> is not authorized.
+        </p>
       </div>
-      <button class="btn" onclick="launchDashboard()">
-        🚀 Launch Dashboard
+      
+      <button class="btn" onclick="handleLogout()">
+        🔄 Try Another Account
       </button>
+      
+      <div class="info-box">
+        <strong>Authorized Tech Team:</strong>
+        <ul>
+          <li>Manjeet Kashyap</li>
+          <li>Suraj</li>
+          <li>Veer Bahadur</li>
+          <li>Neeraj Kumar</li>
+          <li>Gaurav Pal (Admin)</li>
+        </ul>
+        <p style="margin-top: 12px; font-size: 12px;">
+          Need access? Contact: <a href="mailto:gaurav.pal@billfree.in" style="color: #667eea;">gaurav.pal@billfree.in</a>
+        </p>
+      </div>
     </div>
   </div>
   
   <script>
+    // ═══════════════════════════════════════════════════════════════
+    // 🔐 BILLFREE AUTHENTICATION PORTAL v4.0
+    // Post-Auth Redirect to Original Dashboard
+    // ═══════════════════════════════════════════════════════════════
+    
     const CONFIG = {
       GOOGLE_CLIENT_ID: '694517401702-4oidkp8p8h9fcpkst0d76o7tn10r1vqq.apps.googleusercontent.com', // ⚠️ REPLACE
-      API_URL: 'https://script.google.com/macros/s/AKfycbySswr_gROg1Jvz-fJ5-yeKbbmMdf38Jb437DE79xgsgE61jjSnF8dM2rEnYoYN0d8pEQ/exec',
+      DASHBOARD_URL: 'https://script.google.com/macros/s/AKfycbySswr_gROg1Jvz-fJ5-yeKbbmMdf38Jb437DE79xgsgE61jjSnF8dM2rEnYoYN0d8pEQ/exec',
+      
       AUTHORIZED_EMAILS: [
         'manjeetkashyap.billfree@gmail.com',
         'suraj.billfree2@gmail.com',
@@ -105,13 +298,16 @@
     
     let currentUser = null;
     
+    // Initialize Google Sign-In
     window.addEventListener('load', () => {
       setTimeout(() => {
         google.accounts.id.initialize({
           client_id: CONFIG.GOOGLE_CLIENT_ID,
           callback: handleCredentialResponse
         });
+        console.log('✅ Google Sign-In initialized');
       }, 1000);
+      
       checkSession();
     });
     
@@ -123,12 +319,25 @@
       const payload = parseJwt(response.credential);
       const email = payload.email.toLowerCase();
       
+      console.log('🔐 Authentication attempt:', email);
+      
       if (CONFIG.AUTHORIZED_EMAILS.includes(email)) {
-        currentUser = { email, name: payload.name };
+        // ✅ AUTHORIZED
+        currentUser = {
+          email: email,
+          name: payload.name,
+          picture: payload.picture,
+          role: email === 'gaurav.pal@billfree.in' ? 'ADMIN' : 'AGENT'
+        };
+        
         saveSession(currentUser);
         showAuthenticated();
+        
+        console.log('✅ Access granted:', email);
       } else {
-        alert('Access Denied: ' + email + ' is not authorized');
+        // ❌ UNAUTHORIZED
+        showAccessDenied(email);
+        console.log('❌ Access denied:', email);
       }
     }
     
@@ -138,10 +347,34 @@
       document.getElementById('user-email').textContent = currentUser.email;
     }
     
-    function launchDashboard() {
-      window.location.href = CONFIG.API_URL;
+    function showAccessDenied(email) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('access-denied').classList.add('show');
+      document.getElementById('denied-email').textContent = email;
     }
     
+    function launchDashboard() {
+      const btn = document.getElementById('launch-btn');
+      btn.innerHTML = '<span class="loading"></span> Launching...';
+      btn.disabled = true;
+      
+      console.log('🚀 Launching dashboard...');
+      console.log('🔗 URL:', CONFIG.DASHBOARD_URL);
+      console.log('👤 User:', currentUser.email);
+      
+      // Small delay for UX
+      setTimeout(() => {
+        window.location.href = CONFIG.DASHBOARD_URL;
+      }, 800);
+    }
+    
+    function handleLogout() {
+      google.accounts.id.disableAutoSelect();
+      clearSession();
+      location.reload();
+    }
+    
+    // Session Management
     function saveSession(user) {
       localStorage.setItem('billfree_session', JSON.stringify({
         ...user,
@@ -161,11 +394,15 @@
           currentUser = user;
           showAuthenticated();
         } else {
-          localStorage.removeItem('billfree_session');
+          clearSession();
         }
       } catch (e) {
-        localStorage.removeItem('billfree_session');
+        clearSession();
       }
+    }
+    
+    function clearSession() {
+      localStorage.removeItem('billfree_session');
     }
     
     function parseJwt(token) {
@@ -180,6 +417,10 @@
         return null;
       }
     }
+    
+    console.log('🚀 BillFree TechSupport Authentication Portal v4.0');
+    console.log('🔐 Security: Email Whitelist + Google OAuth 2.0');
+    console.log('📍 Portal: billfreetechfix.netlify.app');
   </script>
 </body>
 </html>
