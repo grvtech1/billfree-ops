@@ -3,41 +3,86 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🔐 BillFree TechSupport - Secure Portal</title>
+  <meta name="description" content="BillFree TechSupport Operations - Secure Dashboard">
+  <title>🔐 BillFree TechSupport Ops</title>
+  
+  <!-- Google Sign-In Library -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
     
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    html, body {
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+      overflow: hidden;
+    }
+    
+    /* ========== LOGIN SCREEN ========== */
+    #login-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      z-index: 1000;
+      transition: opacity 0.5s ease;
     }
     
-    .portal {
+    #login-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+    }
+    
+    .login-container {
       background: white;
       border-radius: 20px;
       padding: 60px 48px;
-      max-width: 600px;
-      width: 100%;
+      max-width: 500px;
+      width: 90%;
       text-align: center;
       box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      animation: slideUp 0.6s ease-out;
     }
     
-    .icon {
-      font-size: 80px;
-      margin-bottom: 24px;
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .logo {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 32px;
+      font-size: 48px;
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
     }
     
     h1 {
       font-size: 32px;
       font-weight: 800;
       color: #1E293B;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
     
     .subtitle {
@@ -47,112 +92,554 @@
       line-height: 1.6;
     }
     
-    .options {
-      display: grid;
-      gap: 16px;
-      margin-bottom: 32px;
+    #google-signin-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 16px 32px;
+      background: white;
+      border: 2px solid #E2E8F0;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #1E293B;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 24px;
     }
     
-    .btn {
-      padding: 18px 32px;
+    #google-signin-btn:hover {
+      border-color: #667eea;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    }
+    
+    .security-info {
+      background: #F8FAFC;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: left;
+      font-size: 13px;
+      color: #64748B;
+    }
+    
+    .security-info strong {
+      color: #1E293B;
+      display: block;
+      margin-bottom: 8px;
+    }
+    
+    .security-info ul {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .security-info li {
+      padding: 4px 0;
+      padding-left: 20px;
+      position: relative;
+    }
+    
+    .security-info li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #10B981;
+      font-weight: 700;
+    }
+    
+    /* ========== ACCESS DENIED ========== */
+    #access-denied {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, #DC2626 0%, #EF4444 100%);
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+    
+    #access-denied.show {
+      display: flex;
+    }
+    
+    .denied-container {
+      background: white;
+      border-radius: 20px;
+      padding: 60px 48px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    
+    .denied-icon {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, #DC2626 0%, #EF4444 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 32px;
+      font-size: 48px;
+    }
+    
+    .btn-retry {
+      width: 100%;
+      padding: 16px 32px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
       border: none;
       border-radius: 12px;
       font-size: 16px;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
     }
     
-    .btn-primary {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
+    .btn-retry:hover {
+      transform: translateY(-2px);
       box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
     }
     
-    .btn-primary:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+    /* ========== DASHBOARD ========== */
+    #dashboard {
+      display: none;
+      height: 100%;
+      width: 100%;
+      position: relative;
     }
     
-    .btn-secondary {
-      background: #F1F5F9;
-      color: #475569;
+    #dashboard.show {
+      display: block;
     }
     
-    .btn-secondary:hover {
-      background: #E2E8F0;
+    #dashboard-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
     }
     
-    .info {
-      background: #F8FAFC;
-      padding: 20px;
+    /* ========== USER BADGE ========== */
+    .user-badge {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      background: white;
+      padding: 10px 16px;
       border-radius: 12px;
-      font-size: 14px;
-      color: #64748B;
-      text-align: left;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      gap: 10px;
     }
     
-    .info strong {
+    .user-badge.show {
+      display: flex;
+    }
+    
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 16px;
+    }
+    
+    .user-info {
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    
+    .user-name {
+      font-weight: 700;
       color: #1E293B;
+    }
+    
+    .user-role {
+      font-size: 11px;
+      color: #64748B;
+    }
+    
+    .btn-logout {
+      margin-left: 8px;
+      padding: 6px 14px;
+      border: none;
+      background: #EF4444;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    
+    .btn-logout:hover {
+      background: #DC2626;
+    }
+    
+    /* ========== LOADING ========== */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(102, 126, 234, 0.3);
+      border-top-color: #667eea;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 600px) {
+      .login-container, .denied-container {
+        padding: 40px 28px;
+      }
+      
+      h1 {
+        font-size: 26px;
+      }
+      
+      .logo, .denied-icon {
+        width: 80px;
+        height: 80px;
+        font-size: 36px;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="portal">
-    <div class="icon">🔐</div>
-    <h1>BillFree TechSupport Portal</h1>
-    <p class="subtitle">
-      Choose how you'd like to access the dashboard
-    </p>
-    
-    <div class="options">
-      <button class="btn btn-primary" onclick="openSameWindow()">
-        🚀 Open in This Window
+  <!-- ========== LOGIN SCREEN ========== -->
+  <div id="login-screen">
+    <div class="login-container">
+      <div class="logo">🎫</div>
+      
+      <h1>BillFree TechSupport</h1>
+      <p class="subtitle">
+        Operations Management Dashboard<br>
+        <strong>Enterprise v10.0 PRO</strong>
+      </p>
+      
+      <button id="google-signin-btn" onclick="handleGoogleSignIn()">
+        <svg width="20" height="20" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        Sign in with Google
       </button>
-      <button class="btn btn-secondary" onclick="openNewTab()">
-        🔗 Open in New Tab
-      </button>
-      <button class="btn btn-secondary" onclick="openPopup()">
-        📱 Open in Popup Window
-      </button>
-    </div>
-    
-    <div class="info">
-      <strong>🔒 Secure Access:</strong><br>
-      • Requires BillFree Google account<br>
-      • OAuth 2.0 authentication<br>
-      • Session expires after 8 hours<br>
-      • All access attempts logged
+      
+      <div class="security-info">
+        <strong>🔒 Secure Authentication</strong>
+        <ul>
+          <li>OAuth 2.0 protected</li>
+          <li>Only authorized team members</li>
+          <li>Session expires after 8 hours</li>
+          <li>All access attempts logged</li>
+        </ul>
+      </div>
     </div>
   </div>
   
-  <script>
-    const DASHBOARD_URL = 'https://script.google.com/macros/s/AKfycbwdJfI9tUybDvRZJXGLgCE_bsxKxnkRluLT2CAQxmhYN3QPHnmdplxhCPt8X7aEDcBLUA/exec';
-    
-    function openSameWindow() {
-      window.location.href = DASHBOARD_URL;
-    }
-    
-    function openNewTab() {
-      window.open(DASHBOARD_URL, '_blank');
-    }
-    
-    function openPopup() {
-      const width = 1400;
-      const height = 900;
-      const left = (screen.width - width) / 2;
-      const top = (screen.height - height) / 2;
+  <!-- ========== ACCESS DENIED ========== -->
+  <div id="access-denied">
+    <div class="denied-container">
+      <div class="denied-icon">🔒</div>
       
-      window.open(
-        DASHBOARD_URL,
-        'BillFreeDashboard',
-        `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,status=yes`
-      );
+      <h1>Access Denied</h1>
+      <p class="subtitle" style="color: #DC2626;">
+        <strong>ERROR: UNAUTHORIZED ACCESS</strong>
+      </p>
+      <p class="subtitle">
+        Your account <strong id="denied-email"></strong> is not authorized to access this system.
+      </p>
+      
+      <div class="security-info">
+        <strong>Authorized Tech Team:</strong>
+        <ul>
+          <li>Manjeet Kashyap</li>
+          <li>Suraj</li>
+          <li>Veer Bahadur</li>
+          <li>Neeraj Kumar</li>
+          <li>Gaurav Pal (Admin)</li>
+        </ul>
+      </div>
+      
+      <button class="btn-retry" onclick="handleLogout()" style="margin-top: 24px;">
+        🔄 Try Another Account
+      </button>
+      
+      <p class="subtitle" style="margin-top: 20px; font-size: 13px;">
+        Need access? Contact: <a href="mailto:gaurav.pal@billfree.in" style="color: #667eea;">gaurav.pal@billfree.in</a>
+      </p>
+    </div>
+  </div>
+  
+  <!-- ========== USER BADGE ========== -->
+  <div class="user-badge" id="user-badge">
+    <div class="user-avatar" id="user-avatar">M</div>
+    <div class="user-info">
+      <div class="user-name" id="user-name">Loading...</div>
+      <div class="user-role" id="user-role">AGENT</div>
+    </div>
+    <button class="btn-logout" onclick="handleLogout()">Logout</button>
+  </div>
+  
+  <!-- ========== DASHBOARD ========== -->
+  <div id="dashboard">
+    <iframe 
+      id="dashboard-frame"
+      src="https://script.google.com/a/macros/billfree.in/s/AKfycbwdJfI9tUybDvRZJXGLgCE_bsxKxnkRluLT2CAQxmhYN3QPHnmdplxhCPt8X7aEDcBLUA/exec"
+      allow="clipboard-read; clipboard-write"
+      sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-popups-to-escape-sandbox allow-top-navigation"
+      title="BillFree TechSupport Dashboard"
+    ></iframe>
+  </div>
+  
+  <script>
+    // ═══════════════════════════════════════════════════════════════
+    // 🔐 BILLFREE AUTHENTICATION SYSTEM v3.0
+    // ═══════════════════════════════════════════════════════════════
+    
+    // Configuration
+    const CONFIG = {
+      GOOGLE_CLIENT_ID: '694517401702-4oidkp8p8h9fcpkst0d76o7tn10r1vqq.apps.googleusercontent.com', // ⚠️ REPLACE THIS
+      DASHBOARD_URL: 'https://script.google.com/a/macros/billfree.in/s/AKfycbwdJfI9tUybDvRZJXGLgCE_bsxKxnkRluLT2CAQxmhYN3QPHnmdplxhCPt8X7aEDcBLUA/exec',
+      
+      // Authorized emails (case-insensitive)
+      AUTHORIZED_EMAILS: [
+        'manjeetkashyap.billfree@gmail.com',
+        'suraj.billfree2@gmail.com',
+        'veer.billfree@gmail.com',
+        'neerajkumar.billfree@gmail.com',
+        'gaurav.pal@billfree.in'
+      ],
+      
+      // Name mapping
+      NAME_MAP: {
+        'manjeetkashyap.billfree@gmail.com': 'Manjeet',
+        'suraj.billfree2@gmail.com': 'Suraj',
+        'veer.billfree@gmail.com': 'Veer Bahadur',
+        'neerajkumar.billfree@gmail.com': 'Neeraj Kumar',
+        'gaurav.pal@billfree.in': 'Gaurav Pal'
+      },
+      
+      // Role mapping
+      ADMIN_EMAILS: ['gaurav.pal@billfree.in']
+    };
+    
+    // State
+    let currentUser = null;
+    let googleAuth = null;
+    
+    // ═══════════════════════════════════════════════════════════════
+    // 🔐 GOOGLE SIGN-IN INITIALIZATION
+    // ═══════════════════════════════════════════════════════════════
+    
+    function initGoogleSignIn() {
+      google.accounts.id.initialize({
+        client_id: CONFIG.GOOGLE_CLIENT_ID,
+        callback: handleCredentialResponse,
+        auto_select: false,
+        cancel_on_tap_outside: true
+      });
+      
+      console.log('✅ Google Sign-In initialized');
     }
+    
+    // Initialize on load
+    window.addEventListener('load', () => {
+      setTimeout(initGoogleSignIn, 1000);
+      checkExistingSession();
+    });
+    
+    // ═══════════════════════════════════════════════════════════════
+    // 🔐 AUTHENTICATION HANDLERS
+    // ═══════════════════════════════════════════════════════════════
+    
+    function handleGoogleSignIn() {
+      google.accounts.id.prompt((notification) => {
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+          // Fallback: Show one-tap UI
+          console.log('Prompting Google Sign-In...');
+        }
+      });
+    }
+    
+    function handleCredentialResponse(response) {
+      const credential = response.credential;
+      
+      // Decode JWT token to get user info
+      const payload = parseJwt(credential);
+      
+      console.log('🔐 Google Sign-In response:', payload);
+      
+      const email = payload.email.toLowerCase();
+      const name = payload.name;
+      const picture = payload.picture;
+      
+      // Check if authorized
+      if (CONFIG.AUTHORIZED_EMAILS.includes(email)) {
+        // ✅ AUTHORIZED
+        currentUser = {
+          email: email,
+          name: CONFIG.NAME_MAP[email] || name,
+          picture: picture,
+          role: CONFIG.ADMIN_EMAILS.includes(email) ? 'ADMIN' : 'AGENT',
+          token: credential
+        };
+        
+        // Save session
+        saveSession(currentUser);
+        
+        // Show dashboard
+        showDashboard();
+        
+        console.log('✅ Access granted:', currentUser.name);
+      } else {
+        // ❌ UNAUTHORIZED
+        showAccessDenied(email);
+        console.log('❌ Access denied:', email);
+      }
+    }
+    
+    // ═══════════════════════════════════════════════════════════════
+    // 📺 UI CONTROL FUNCTIONS
+    // ═══════════════════════════════════════════════════════════════
+    
+    function showDashboard() {
+      // Hide login
+      document.getElementById('login-screen').classList.add('hidden');
+      
+      // Show dashboard
+      document.getElementById('dashboard').classList.add('show');
+      
+      // Show user badge
+      const badge = document.getElementById('user-badge');
+      badge.classList.add('show');
+      
+      // Update user info
+      document.getElementById('user-name').textContent = currentUser.name;
+      document.getElementById('user-role').textContent = currentUser.role;
+      document.getElementById('user-avatar').textContent = currentUser.name.charAt(0).toUpperCase();
+      
+      console.log('✅ Dashboard loaded for:', currentUser.name);
+    }
+    
+    function showAccessDenied(email) {
+      // Hide login
+      document.getElementById('login-screen').classList.add('hidden');
+      
+      // Show access denied
+      document.getElementById('access-denied').classList.add('show');
+      document.getElementById('denied-email').textContent = email;
+    }
+    
+    function handleLogout() {
+      // Sign out from Google
+      google.accounts.id.disableAutoSelect();
+      
+      // Clear session
+      clearSession();
+      
+      // Reset UI
+      document.getElementById('login-screen').classList.remove('hidden');
+      document.getElementById('dashboard').classList.remove('show');
+      document.getElementById('access-denied').classList.remove('show');
+      document.getElementById('user-badge').classList.remove('show');
+      
+      currentUser = null;
+      
+      console.log('🚪 Logged out successfully');
+    }
+    
+    // ═══════════════════════════════════════════════════════════════
+    // 💾 SESSION MANAGEMENT
+    // ═══════════════════════════════════════════════════════════════
+    
+    function saveSession(user) {
+      const sessionData = {
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        picture: user.picture,
+        timestamp: Date.now()
+      };
+      
+      localStorage.setItem('billfree_session', JSON.stringify(sessionData));
+    }
+    
+    function checkExistingSession() {
+      const session = localStorage.getItem('billfree_session');
+      
+      if (!session) return;
+      
+      try {
+        const user = JSON.parse(session);
+        
+        // Check if session is less than 8 hours old
+        const eightHours = 8 * 60 * 60 * 1000;
+        if (Date.now() - user.timestamp < eightHours) {
+          currentUser = user;
+          showDashboard();
+          console.log('✅ Restored session for:', user.name);
+        } else {
+          clearSession();
+          console.log('⏰ Session expired');
+        }
+      } catch (e) {
+        console.error('Session restore error:', e);
+        clearSession();
+      }
+    }
+    
+    function clearSession() {
+      localStorage.removeItem('billfree_session');
+    }
+    
+    // ═══════════════════════════════════════════════════════════════
+    // 🔧 UTILITY FUNCTIONS
+    // ═══════════════════════════════════════════════════════════════
+    
+    function parseJwt(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        
+        return JSON.parse(jsonPayload);
+      } catch (e) {
+        console.error('JWT parse error:', e);
+        return null;
+      }
+    }
+    
+    // ═══════════════════════════════════════════════════════════════
+    // 🎯 INITIALIZATION
+    // ═══════════════════════════════════════════════════════════════
+    
+    console.log('🚀 BillFree TechSupport Auth System v3.0');
+    console.log('🔗 Dashboard URL:', CONFIG.DASHBOARD_URL);
+    console.log('👥 Authorized users:', CONFIG.AUTHORIZED_EMAILS.length);
+    
   </script>
 </body>
 </html>
