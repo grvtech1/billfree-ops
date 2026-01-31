@@ -3,188 +3,79 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="BillFree TechSupport Operations - Secure Dashboard Access">
-  <meta http-equiv="X-Frame-Options" content="DENY">
-  <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'none'">
-  <title>🔐 BillFree TechSupport Ops - Secure Access</title>
+  <title>🔐 BillFree TechSupport - Secure Portal</title>
   
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     
-    html, body {
-      height: 100%;
-      overflow: hidden;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
-    }
-    
-    /* Loading Screen */
-    #loader {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      z-index: 9999;
-      transition: opacity 0.5s ease, visibility 0.5s ease;
-    }
-    
-    #loader.hidden {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
-    
-    .loader-content {
-      text-align: center;
-      color: white;
-      max-width: 400px;
       padding: 20px;
     }
     
-    .spinner {
-      width: 60px;
-      height: 60px;
-      border: 4px solid rgba(255, 255, 255, 0.3);
-      border-top-color: white;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto 24px;
+    .portal {
+      background: white;
+      border-radius: 20px;
+      padding: 60px 48px;
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     }
     
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    .icon {
+      font-size: 80px;
+      margin-bottom: 24px;
     }
     
-    .loader-title {
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      letter-spacing: -0.5px;
-    }
-    
-    .loader-subtitle {
-      font-size: 14px;
-      opacity: 0.9;
-      font-weight: 500;
+    h1 {
+      font-size: 32px;
+      font-weight: 800;
+      color: #1E293B;
       margin-bottom: 16px;
     }
     
-    .security-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(255, 255, 255, 0.2);
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      margin-top: 12px;
-    }
-    
-    .security-badge::before {
-      content: "🔒";
-      font-size: 14px;
-    }
-    
-    /* Main iframe */
-    #app-frame {
-      width: 100%;
-      height: 100%;
-      border: none;
-      display: block;
-      background: #F8FAFC;
-    }
-    
-    /* Error Screen */
-    #error-screen {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: #F8FAFC;
-      align-items: center;
-      justify-content: center;
-      z-index: 9998;
-      padding: 20px;
-    }
-    
-    #error-screen.show {
-      display: flex;
-    }
-    
-    .error-content {
-      text-align: center;
-      max-width: 500px;
-      background: white;
-      padding: 48px;
-      border-radius: 16px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-    }
-    
-    .error-icon {
-      font-size: 64px;
-      margin-bottom: 20px;
-      animation: shake 0.5s ease;
-    }
-    
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-10px); }
-      75% { transform: translateX(10px); }
-    }
-    
-    .error-title {
-      font-size: 24px;
-      font-weight: 700;
-      color: #1E293B;
-      margin-bottom: 12px;
-    }
-    
-    .error-message {
+    .subtitle {
       font-size: 16px;
       color: #64748B;
-      margin-bottom: 24px;
+      margin-bottom: 40px;
       line-height: 1.6;
     }
     
-    .error-actions {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
+    .options {
+      display: grid;
+      gap: 16px;
+      margin-bottom: 32px;
     }
     
     .btn {
-      padding: 12px 24px;
+      padding: 18px 32px;
       border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s ease;
-      text-decoration: none;
-      display: inline-block;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
     }
     
     .btn-primary {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
     }
     
     .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
     }
     
     .btn-secondary {
@@ -196,349 +87,72 @@
       background: #E2E8F0;
     }
     
-    .help-text {
-      margin-top: 24px;
-      padding-top: 24px;
-      border-top: 2px solid #E2E8F0;
-      font-size: 13px;
-      color: #94A3B8;
-    }
-    
-    .help-text a {
-      color: #667eea;
-      text-decoration: none;
-      font-weight: 600;
-    }
-    
-    /* Auth Required Screen */
-    #auth-required {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      align-items: center;
-      justify-content: center;
-      z-index: 9997;
+    .info {
+      background: #F8FAFC;
       padding: 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      color: #64748B;
+      text-align: left;
     }
     
-    #auth-required.show {
-      display: flex;
-    }
-    
-    .auth-content {
-      text-align: center;
-      max-width: 500px;
-      background: white;
-      padding: 48px;
-      border-radius: 16px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    }
-    
-    .auth-icon {
-      width: 80px;
-      height: 80px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 24px;
-      font-size: 40px;
-    }
-    
-    /* Responsive */
-    @media (max-width: 768px) {
-      .loader-title { font-size: 20px; }
-      .loader-subtitle { font-size: 13px; }
-      .error-content, .auth-content { padding: 32px 24px; }
-      .error-actions { flex-direction: column; }
-      .btn { width: 100%; }
+    .info strong {
+      color: #1E293B;
     }
   </style>
 </head>
 <body>
-  <!-- Loading Screen -->
-  <div id="loader">
-    <div class="loader-content">
-      <div class="spinner"></div>
-      <div class="loader-title">🎫 BillFree TechSupport Ops</div>
-      <div class="loader-subtitle">Verifying credentials & loading dashboard...</div>
-      <div class="security-badge">Secure Connection Active</div>
+  <div class="portal">
+    <div class="icon">🔐</div>
+    <h1>BillFree TechSupport Portal</h1>
+    <p class="subtitle">
+      Choose how you'd like to access the dashboard
+    </p>
+    
+    <div class="options">
+      <button class="btn btn-primary" onclick="openSameWindow()">
+        🚀 Open in This Window
+      </button>
+      <button class="btn btn-secondary" onclick="openNewTab()">
+        🔗 Open in New Tab
+      </button>
+      <button class="btn btn-secondary" onclick="openPopup()">
+        📱 Open in Popup Window
+      </button>
+    </div>
+    
+    <div class="info">
+      <strong>🔒 Secure Access:</strong><br>
+      • Requires BillFree Google account<br>
+      • OAuth 2.0 authentication<br>
+      • Session expires after 8 hours<br>
+      • All access attempts logged
     </div>
   </div>
-  
-  <!-- Authentication Required Screen -->
-  <div id="auth-required">
-    <div class="auth-content">
-      <div class="auth-icon">🔐</div>
-      <h1 class="error-title">Authentication Required</h1>
-      <p class="error-message">
-        This dashboard requires BillFree Tech Team credentials. 
-        Please sign in with your authorized Google account to continue.
-      </p>
-      <div class="error-actions">
-        <a href="https://script.google.com/macros/s/AKfycbwdJfI9tUybDvRZJXGLgCE_bsxKxnkRluLT2CAQxmhYN3QPHnmdplxhCPt8X7aEDcBLUA/exec" 
-           class="btn btn-primary" target="_blank">
-          🔓 Sign In with Google
-        </a>
-        <button class="btn btn-secondary" onclick="location.reload()">
-          🔄 Refresh
-        </button>
-      </div>
-      <div class="help-text">
-        <strong>Authorized Access Only:</strong><br>
-        Manjeet • Suraj • Veer • Neeraj • Gaurav<br><br>
-        Need access? Contact: <a href="mailto:gaurav.pal@billfree.in">gaurav.pal@billfree.in</a>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Error Screen -->
-  <div id="error-screen">
-    <div class="error-content">
-      <div class="error-icon">⚠️</div>
-      <h1 class="error-title">Unable to Load Dashboard</h1>
-      <p class="error-message" id="error-message">
-        The application failed to load. Please check your connection and try again.
-      </p>
-      <div class="error-actions">
-        <button class="btn btn-primary" onclick="location.reload()">
-          🔄 Retry
-        </button>
-        <a href="https://script.google.com/macros/s/AKfycbwdJfI9tUybDvRZJXGLgCE_bsxKxnkRluLT2CAQxmhYN3QPHnmdplxhCPt8X7aEDcBLUA/exec" 
-           class="btn btn-secondary" target="_blank">
-          🔗 Open Direct Link
-        </a>
-      </div>
-      <div class="help-text">
-        If the issue persists, contact: <a href="mailto:gaurav.pal@billfree.in">gaurav.pal@billfree.in</a>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Main Application iframe -->
-  <iframe 
-    id="app-frame"
-    src="https://script.google.com/macros/s/AKfycbwdJfI9tUybDvRZJXGLgCE_bsxKxnkRluLT2CAQxmhYN3QPHnmdplxhCPt8X7aEDcBLUA/exec"
-    allow="clipboard-read; clipboard-write"
-    sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-popups-to-escape-sandbox allow-top-navigation"
-    referrerpolicy="strict-origin-when-cross-origin"
-    loading="eager"
-    title="BillFree TechSupport Operations Dashboard"
-  ></iframe>
   
   <script>
-    // ═══════════════════════════════════════════════════════════════
-    // 🔐 BILLFREE SECURE WRAPPER v2.0
-    // ═══════════════════════════════════════════════════════════════
+    const DASHBOARD_URL = 'https://script.google.com/macros/s/AKfycbwdJfI9tUybDvRZJXGLgCE_bsxKxnkRluLT2CAQxmhYN3QPHnmdplxhCPt8X7aEDcBLUA/exec';
     
-    // Configuration
-    const CONFIG = {
-      APP_URL: 'https://script.google.com/macros/s/AKfycbwdJfI9tUybDvRZJXGLgCE_bsxKxnkRluLT2CAQxmhYN3QPHnmdplxhCPt8X7aEDcBLUA/exec',
-      LOAD_TIMEOUT: 15000, // 15 seconds
-      AUTH_CHECK_DELAY: 3000, // Check for auth after 3 seconds
-      ALLOWED_ORIGINS: ['https://script.google.com', 'https://script.googleusercontent.com']
-    };
-    
-    // DOM Elements
-    const elements = {
-      frame: document.getElementById('app-frame'),
-      loader: document.getElementById('loader'),
-      errorScreen: document.getElementById('error-screen'),
-      authRequired: document.getElementById('auth-required'),
-      errorMessage: document.getElementById('error-message')
-    };
-    
-    // State
-    let isLoaded = false;
-    let loadTimeout;
-    let authCheckTimeout;
-    
-    // ═══════════════════════════════════════════════════════════════
-    // 🔐 SECURITY CHECKS
-    // ═══════════════════════════════════════════════════════════════
-    
-    // Prevent clickjacking
-    if (window.self !== window.top) {
-      document.body.innerHTML = '<div style="text-align:center;padding:50px;font-family:sans-serif;"><h1>🔒 Security Error</h1><p>This application cannot be embedded in frames.</p></div>';
-      throw new Error('Clickjacking prevention: Cannot be embedded');
+    function openSameWindow() {
+      window.location.href = DASHBOARD_URL;
     }
     
-    // ═══════════════════════════════════════════════════════════════
-    // 📡 IFRAME EVENT HANDLERS
-    // ═══════════════════════════════════════════════════════════════
+    function openNewTab() {
+      window.open(DASHBOARD_URL, '_blank');
+    }
     
-    // Successful load
-    elements.frame.addEventListener('load', () => {
-      console.log('✅ iframe loaded');
-      isLoaded = true;
-      clearTimeout(loadTimeout);
+    function openPopup() {
+      const width = 1400;
+      const height = 900;
+      const left = (screen.width - width) / 2;
+      const top = (screen.height - height) / 2;
       
-      // Check if it's an access denied page after slight delay
-      setTimeout(checkForAccessDenied, CONFIG.AUTH_CHECK_DELAY);
-    });
-    
-    // Load error
-    elements.frame.addEventListener('error', () => {
-      handleLoadError('Failed to load the application. Please check your connection.');
-    });
-    
-    // Timeout fallback
-    loadTimeout = setTimeout(() => {
-      if (!isLoaded) {
-        handleLoadError('Application is taking too long to load. Please check your connection and firewall settings.');
-      }
-    }, CONFIG.LOAD_TIMEOUT);
-    
-    // ═══════════════════════════════════════════════════════════════
-    // 🔐 ACCESS DENIED DETECTION
-    // ═══════════════════════════════════════════════════════════════
-    
-    function checkForAccessDenied() {
-      try {
-        // Try to detect if access denied page is shown
-        // Note: Due to same-origin policy, we can't directly access iframe content
-        // But we can check if we received any messages from the iframe
-        
-        // For now, we'll assume success and hide loader
-        // If auth fails, the Google Apps Script page will show access denied
-        setTimeout(() => {
-          elements.loader.classList.add('hidden');
-          console.log('✅ Dashboard ready');
-        }, 500);
-        
-      } catch (e) {
-        console.log('⚠️ Cannot check iframe content (expected due to CORS)');
-        elements.loader.classList.add('hidden');
-      }
-    }
-    
-    // ═══════════════════════════════════════════════════════════════
-    // ⚠️ ERROR HANDLING
-    // ═══════════════════════════════════════════════════════════════
-    
-    function handleLoadError(message) {
-      clearTimeout(loadTimeout);
-      elements.loader.classList.add('hidden');
-      elements.errorScreen.classList.add('show');
-      elements.errorMessage.textContent = message;
-      console.error('❌ Load error:', message);
-    }
-    
-    function showAuthRequired() {
-      clearTimeout(loadTimeout);
-      elements.loader.classList.add('hidden');
-      elements.authRequired.classList.add('show');
-      console.warn('🔐 Authentication required');
-    }
-    
-    // ═══════════════════════════════════════════════════════════════
-    // 📨 MESSAGE HANDLER (Iframe Communication)
-    // ═══════════════════════════════════════════════════════════════
-    
-    window.addEventListener('message', (event) => {
-      // Verify origin
-      const isAllowedOrigin = CONFIG.ALLOWED_ORIGINS.some(origin => 
-        event.origin.includes(origin) || event.origin === window.location.origin
+      window.open(
+        DASHBOARD_URL,
+        'BillFreeDashboard',
+        `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,status=yes`
       );
-      
-      if (!isAllowedOrigin) {
-        console.warn('⚠️ Message from untrusted origin:', event.origin);
-        return;
-      }
-      
-      console.log('📨 Message from app:', event.data);
-      
-      // Handle different message types
-      if (event.data && typeof event.data === 'object') {
-        switch (event.data.type) {
-          case 'AUTH_SUCCESS':
-            console.log('✅ Authentication successful');
-            elements.loader.classList.add('hidden');
-            break;
-            
-          case 'AUTH_FAILED':
-            console.log('❌ Authentication failed');
-            showAuthRequired();
-            break;
-            
-          case 'READY':
-            console.log('✅ App ready');
-            elements.loader.classList.add('hidden');
-            break;
-            
-          default:
-            console.log('📨 Unknown message type:', event.data.type);
-        }
-      }
-    });
-    
-    // ═══════════════════════════════════════════════════════════════
-    // 📊 PERFORMANCE MONITORING
-    // ═══════════════════════════════════════════════════════════════
-    
-    window.addEventListener('load', () => {
-      const loadTime = performance.now();
-      console.log(`⏱️ Wrapper load time: ${Math.round(loadTime)}ms`);
-      
-      // Log navigation timing
-      if (performance.getEntriesByType) {
-        const perfData = performance.getEntriesByType('navigation')[0];
-        if (perfData) {
-          console.log('📊 Performance metrics:', {
-            DNS: Math.round(perfData.domainLookupEnd - perfData.domainLookupStart) + 'ms',
-            TCP: Math.round(perfData.connectEnd - perfData.connectStart) + 'ms',
-            Request: Math.round(perfData.responseStart - perfData.requestStart) + 'ms',
-            Response: Math.round(perfData.responseEnd - perfData.responseStart) + 'ms',
-            DOM: Math.round(perfData.domContentLoadedEventEnd - perfData.domContentLoadedEventStart) + 'ms'
-          });
-        }
-      }
-    });
-    
-    // ═══════════════════════════════════════════════════════════════
-    // 🔄 VISIBILITY CHANGE HANDLER
-    // ═══════════════════════════════════════════════════════════════
-    
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        console.log('👁️ Tab hidden');
-      } else {
-        console.log('👁️ Tab visible');
-        // Optional: Refresh iframe if it was hidden for too long
-        const hiddenTime = performance.now();
-        // You can add auto-refresh logic here if needed
-      }
-    });
-    
-    // ═══════════════════════════════════════════════════════════════
-    // 🌐 ONLINE/OFFLINE DETECTION
-    // ═══════════════════════════════════════════════════════════════
-    
-    window.addEventListener('online', () => {
-      console.log('✅ Connection restored');
-      if (!isLoaded && elements.errorScreen.classList.contains('show')) {
-        location.reload();
-      }
-    });
-    
-    window.addEventListener('offline', () => {
-      console.log('❌ Connection lost');
-      handleLoadError('You appear to be offline. Please check your internet connection.');
-    });
-    
-    // ═══════════════════════════════════════════════════════════════
-    // 🎯 INITIALIZATION
-    // ═══════════════════════════════════════════════════════════════
-    
-    console.log('🚀 BillFree TechSupport Wrapper v2.0 initialized');
-    console.log('🔗 Loading dashboard from:', CONFIG.APP_URL);
-    console.log('🔐 Security checks: ACTIVE');
-    
+    }
   </script>
 </body>
 </html>
