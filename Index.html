@@ -3,245 +3,238 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="BillFree TechSupport Operations Management System - Enterprise Grade">
-  <title>BillFree TechSupport Ops v10.0 PRO</title>
-  
+  <title>BillFree TechSupport - Sign In</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    html, body {
-      height: 100%;
-      overflow: hidden;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
-    }
-    
-    /* Loading Screen */
-    #loader {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      z-index: 9999;
-      transition: opacity 0.5s ease, visibility 0.5s ease;
+      padding: 20px;
     }
-    
-    #loader.hidden {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
+    .login-container {
+      background: white;
+      border-radius: 20px;
+      padding: 48px;
+      max-width: 450px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      animation: slideUp 0.5s ease-out;
     }
-    
-    .loader-content {
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .logo {
       text-align: center;
+      margin-bottom: 32px;
+    }
+    .logo h1 {
+      font-size: 28px;
+      color: #1E293B;
+      margin-bottom: 8px;
+    }
+    .logo p {
+      color: #64748B;
+      font-size: 14px;
+    }
+    .form-group {
+      margin-bottom: 24px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #334155;
+      font-size: 14px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #E2E8F0;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: all 0.3s;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    .btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
-    
-    .spinner {
-      width: 60px;
-      height: 60px;
-      border: 4px solid rgba(255, 255, 255, 0.3);
-      border-top-color: white;
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .message {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      font-size: 14px;
+      display: none;
+    }
+    .error {
+      background: #FEE2E2;
+      color: #DC2626;
+    }
+    .success {
+      background: #D1FAE5;
+      color: #059669;
+    }
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
       border-radius: 50%;
+      border-top-color: white;
       animation: spin 0.8s linear infinite;
-      margin: 0 auto 24px;
     }
-    
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
-    
-    .loader-title {
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      letter-spacing: -0.5px;
-    }
-    
-    .loader-subtitle {
-      font-size: 14px;
-      opacity: 0.9;
-      font-weight: 500;
-    }
-    
-    /* Main iframe - Full screen */
-    #app-frame {
-      width: 100%;
-      height: 100%;
-      border: none;
-      display: block;
-      background: #F8FAFC;
-    }
-    
-    /* Error Screen */
-    #error-screen {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: #F8FAFC;
-      align-items: center;
-      justify-content: center;
-      z-index: 9998;
-      padding: 20px;
-    }
-    
-    #error-screen.show {
-      display: flex;
-    }
-    
-    .error-content {
+    .footer {
+      margin-top: 24px;
       text-align: center;
-      max-width: 500px;
-    }
-    
-    .error-icon {
-      font-size: 64px;
-      margin-bottom: 20px;
-    }
-    
-    .error-title {
-      font-size: 24px;
-      font-weight: 700;
-      color: #1E293B;
-      margin-bottom: 12px;
-    }
-    
-    .error-message {
-      font-size: 16px;
+      font-size: 12px;
       color: #64748B;
-      margin-bottom: 24px;
-      line-height: 1.6;
     }
-    
-    .retry-button {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 12px 24px;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-    
-    .retry-button:hover {
-      transform: translateY(-2px);
-    }
-    
-    /* Responsive */
-    @media (max-width: 768px) {
-      .loader-title { font-size: 20px; }
-      .loader-subtitle { font-size: 13px; }
+    .footer strong {
+      color: #1E293B;
     }
   </style>
 </head>
 <body>
-  <!-- Loading Screen -->
-  <div id="loader">
-    <div class="loader-content">
-      <div class="spinner"></div>
-      <div class="loader-title">🎫 BillFree TechSupport Ops</div>
-      <div class="loader-subtitle">Loading your dashboard...</div>
+  <div class="login-container">
+    <div class="logo">
+      <h1>🔐 BillFree TechSupport</h1>
+      <p>Enterprise Dashboard v10.0</p>
     </div>
-  </div>
-  
-  <!-- Error Screen -->
-  <div id="error-screen">
-    <div class="error-content">
-      <div class="error-icon">⚠️</div>
-      <h1 class="error-title">Unable to Load Application</h1>
-      <p class="error-message" id="error-message">
-        The application failed to load. Please check your connection and try again.
-      </p>
-      <button class="retry-button" onclick="location.reload()">
-        🔄 Retry
+
+    <div id="error-msg" class="message error"></div>
+    <div id="success-msg" class="message success"></div>
+
+    <form id="login-form">
+      <div class="form-group">
+        <label for="email">Work Email</label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email" 
+          placeholder="your.name@billfree.in"
+          required
+          autocomplete="email"
+          autofocus
+        >
+      </div>
+
+      <button type="submit" class="btn" id="login-btn">
+        <span id="btn-text">Sign In to Dashboard</span>
+        <span id="btn-loading" class="loading" style="display:none;"></span>
       </button>
+    </form>
+
+    <div class="footer">
+      <p>Only authorized BillFree Tech Team members can access</p>
+      <p style="margin-top: 8px;">Need help? Contact <strong>Gaurav Pal</strong></p>
     </div>
   </div>
-  
-  <!-- Main Application iframe -->
-  <iframe 
-    id="app-frame"
-    src="https://script.google.com/macros/s/AKfycbx91-C3ltCuLBjuK7oYaMpbJg92evR83237HT2ER7I5alaCCp0bNMgWFwCNnNqRLMajww/exec"
-    allow="clipboard-read; clipboard-write; camera; microphone"
-    sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-popups-to-escape-sandbox"
-    referrerpolicy="strict-origin-when-cross-origin"
-    loading="eager"
-    title="BillFree TechSupport Operations Dashboard"
-  ></iframe>
-  
+
   <script>
-    // Configuration
-    const LOAD_TIMEOUT = 15000; // 15 seconds
-    const frame = document.getElementById('app-frame');
-    const loader = document.getElementById('loader');
-    const errorScreen = document.getElementById('error-screen');
+    // ✅ REPLACE WITH YOUR ACTUAL DEPLOYMENT URL
+    const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbybaXpgjgLTNMK5raeCyNeFw8n7fNDXsrZgd8Lwkag7knIH67m9FIe6LEBb3WFTh9AvNw/exec';
     
-    // Track load status
-    let isLoaded = false;
-    let loadTimeout;
+    const form = document.getElementById('login-form');
+    const emailInput = document.getElementById('email');
+    const loginBtn = document.getElementById('login-btn');
+    const btnText = document.getElementById('btn-text');
+    const btnLoading = document.getElementById('btn-loading');
+    const errorMsg = document.getElementById('error-msg');
+    const successMsg = document.getElementById('success-msg');
+
+    // Check if already logged in
+    const ssoToken = localStorage.getItem('billfree_sso_token');
+    const ssoEmail = localStorage.getItem('billfree_sso_email');
+    const ssoExpires = parseInt(localStorage.getItem('billfree_sso_expires'));
     
-    // Hide loader when iframe loads
-    frame.addEventListener('load', () => {
-      isLoaded = true;
-      clearTimeout(loadTimeout);
+    if (ssoToken && ssoEmail && Date.now() < ssoExpires) {
+      window.location.href = '/dashboard.html';
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
       
-      setTimeout(() => {
-        loader.classList.add('hidden');
-      }, 500);
-      
-      console.log('✅ BillFree Ops loaded successfully');
-    });
-    
-    // Error handling
-    frame.addEventListener('error', () => {
-      handleLoadError('Failed to load the application. Please try again.');
-    });
-    
-    // Timeout fallback
-    loadTimeout = setTimeout(() => {
-      if (!isLoaded) {
-        handleLoadError('Application is taking too long to load. Please check your connection.');
+      const email = emailInput.value.trim();
+      if (!email) return;
+
+      // Show loading
+      loginBtn.disabled = true;
+      btnText.style.display = 'none';
+      btnLoading.style.display = 'inline-block';
+      errorMsg.style.display = 'none';
+      successMsg.style.display = 'none';
+
+      try {
+        // Request SSO token from backend
+        const response = await fetch(`${BACKEND_URL}?action=get_sso_token&email=${encodeURIComponent(email)}`);
+        const data = await response.json();
+
+        if (data.success) {
+          // Store token
+          localStorage.setItem('billfree_sso_token', data.token);
+          localStorage.setItem('billfree_sso_email', data.validated_email);
+          localStorage.setItem('billfree_sso_expires', Date.now() + (data.expires_in * 1000));
+
+          // Show success
+          successMsg.textContent = '✓ Authentication successful! Redirecting...';
+          successMsg.style.display = 'block';
+
+          // Redirect to dashboard
+          setTimeout(() => {
+            window.location.href = '/dashboard.html';
+          }, 1000);
+
+        } else {
+          // Show error
+          errorMsg.textContent = `⚠ ${data.error === 'UNAUTHORIZED_EMAIL' ? 'Your email is not authorized. Contact admin.' : data.error || 'Authentication failed'}`;
+          errorMsg.style.display = 'block';
+          
+          loginBtn.disabled = false;
+          btnText.style.display = 'inline';
+          btnLoading.style.display = 'none';
+        }
+
+      } catch (error) {
+        console.error('Login error:', error);
+        errorMsg.textContent = '⚠ Network error. Please check your connection.';
+        errorMsg.style.display = 'block';
+        
+        loginBtn.disabled = false;
+        btnText.style.display = 'inline';
+        btnLoading.style.display = 'none';
       }
-    }, LOAD_TIMEOUT);
-    
-    function handleLoadError(message) {
-      loader.classList.add('hidden');
-      errorScreen.classList.add('show');
-      document.getElementById('error-message').textContent = message;
-      console.error('❌ Load error:', message);
-    }
-    
-    // Prevent clickjacking
-    if (window.self !== window.top) {
-      document.body.innerHTML = '<h1 style="text-align:center;padding:50px;">Security Error: Cannot be embedded</h1>';
-    }
-    
-    // Optional: Listen for messages from iframe
-    window.addEventListener('message', (event) => {
-      // Verify origin
-      if (!event.origin.includes('script.google.com')) return;
-      
-      console.log('📨 Message from app:', event.data);
-    });
-    
-    // Performance monitoring
-    window.addEventListener('load', () => {
-      const loadTime = performance.now();
-      console.log(`⏱️ Page load time: ${Math.round(loadTime)}ms`);
     });
   </script>
 </body>
